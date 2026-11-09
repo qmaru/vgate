@@ -7,6 +7,8 @@ import sys
 
 import httpx2
 
+from vgate.report import build_report
+
 API_URL = "https://www.vpngate.net/api/iphone/"
 
 
@@ -67,6 +69,11 @@ def main() -> None:
         default=1,
         metavar="N",
         help="endpoints per region; N>1 also adds a urltest outbound per region",
+    )
+    parser.add_argument(
+        "--report",
+        choices=["text", "markdown"],
+        help="print a route summary to stdout in the given format instead of the config JSON",
     )
     args = parser.parse_args()
     if args.count < 1:
@@ -129,5 +136,7 @@ def main() -> None:
     if args.output:
         with open(args.output, "w", encoding="utf-8") as f:
             f.write(text + "\n")
-    else:
+    if args.report:
+        print(build_report(endpoints, args.report))
+    elif not args.output:
         print(text)
