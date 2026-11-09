@@ -1,6 +1,6 @@
 [project]
 name = "vgate"
-version = "0.2.0"
+version = "0.3.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -10,7 +10,13 @@ dependencies = [
 
 [project.scripts]
 vgate = "vgate.cli:main"
+vgate-convert = "vgate.convert:main"
 
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.4",
+]
