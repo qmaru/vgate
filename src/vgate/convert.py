@@ -26,6 +26,8 @@ def build_endpoint(tag: str, config: str) -> dict:
         "server_port": int(directives["remote"][1]),
         "network": "tcp" if directives.get("proto", ["udp"])[0].startswith("tcp") else "udp",
         "tls": tls,
+        "block_ipv6": True,
+        "domain_resolver": {"server": "google-dns", "strategy": "ipv4_only"},
     }
     for name in ("tls-crypt", "tls-auth"):
         if f"<{name}>" in config:
