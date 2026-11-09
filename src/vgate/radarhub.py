@@ -7,6 +7,8 @@ from urllib.parse import parse_qsl, unquote, urlsplit
 
 import httpx2
 
+from vgate.report import build_report
+
 REGION_URL = "https://radarhub.top/regions/{region}.txt"
 URLTEST_URL = "https://www.gstatic.com/generate_204"
 
@@ -47,6 +49,11 @@ def add_subparser(subparsers) -> None:
     parser.add_argument(
         "--output", metavar="PATH", help="write JSON to this file instead of stdout"
     )
+    parser.add_argument(
+        "--report",
+        choices=["text", "markdown"],
+        help="print a route summary to stdout in the given format instead of the config JSON",
+    )
     parser.set_defaults(run=run)
 
 
@@ -83,5 +90,8 @@ def run(args: argparse.Namespace) -> None:
     text = json.dumps({"outbounds": outbounds}, indent=2)
     if args.output:
         Path(args.output).write_text(text + "\n", encoding="utf-8")
-    else:
+    if args.report:
+        nodes = [o for o in outbounds if o["type"] == "hysteria2"]
+        print(build_report(nodes, args.report, "radarhub.top"))
+    elif not args.output:
         print(text)

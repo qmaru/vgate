@@ -137,6 +137,6 @@ def run(args: argparse.Namespace) -> None:
         with open(args.output, "w", encoding="utf-8") as f:
             f.write(text + "\n")
     if args.report:
-        print(build_report(endpoints, args.report))
+        print(build_report(endpoints, args.report, "vpngate.net"))
     elif not args.output:
         print(text)
