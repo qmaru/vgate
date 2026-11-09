@@ -92,6 +92,6 @@ def run(args: argparse.Namespace) -> None:
         Path(args.output).write_text(text + "\n", encoding="utf-8")
     if args.report:
         nodes = [o for o in outbounds if o["type"] == "hysteria2"]
-        print(build_report(nodes, args.report, "radarhub.top"))
+        print(build_report(nodes, args.report, "nodesradar.com"))
     elif not args.output:
         print(text)
