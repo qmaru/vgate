@@ -1,10 +1,14 @@
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Any
 
-from vgate.cli import pem_block
+
+def pem_block(config: str, name: str) -> list[str]:
+    match = re.search(rf"<{name}>\s*(.*?)\s*</{name}>", config, re.DOTALL)
+    return match.group(1).splitlines() if match else []
 
 
 def build_endpoint(tag: str, config: str) -> dict:
@@ -44,9 +48,11 @@ def build_endpoint(tag: str, config: str) -> dict:
     return endpoint
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Convert OpenVPN .ovpn configs to sing-box openvpn-client endpoints."
+def add_subparser(subparsers) -> None:
+    parser = subparsers.add_parser(
+        "convert",
+        help="convert arbitrary .ovpn files",
+        description="Convert OpenVPN .ovpn configs to sing-box openvpn-client endpoints.",
     )
     parser.add_argument(
         "paths",
@@ -68,16 +74,19 @@ def main() -> None:
     parser.add_argument(
         "--output", metavar="PATH", help="write JSON to this file instead of stdout"
     )
-    args = parser.parse_args()
+    parser.set_defaults(run=run)
+
+
+def run(args: argparse.Namespace) -> None:
     if bool(args.username) != (args.password is not None):
-        parser.error("--username and --password must be given together")
+        sys.exit("--username and --password must be given together")
 
     files = []
     for item in args.paths:
         path = Path(item)
         files += sorted(path.glob("*.ovpn")) if path.is_dir() else [path]
     if not files:
-        parser.error("no .ovpn files found")
+        sys.exit("no .ovpn files found")
 
     endpoints = []
     groups: dict[str, list[str]] = {}
