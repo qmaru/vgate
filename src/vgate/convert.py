@@ -26,6 +26,7 @@ def build_endpoint(tag: str, config: str) -> dict:
     endpoint: dict[str, Any] = {
         "type": "openvpn-client",
         "tag": tag,
+        "on_demand": True,
         "server": directives["remote"][0],
         "server_port": int(directives["remote"][1]),
         "network": "tcp" if directives.get("proto", ["udp"])[0].startswith("tcp") else "udp",

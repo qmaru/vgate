@@ -21,6 +21,7 @@ def build_endpoint(region: str, config: str) -> dict:
 
     endpoint = {
         "type": "openvpn-client",
+        "on_demand": True,
         "tag": f"vpngate-{region.lower()}",
         "server": directives["remote"][0],
         "server_port": int(directives["remote"][1]),
